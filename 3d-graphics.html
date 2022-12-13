@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html>
+    
+    <head>
+    
+        <title>3D Graphics Basics</title>
+        <link href="/style.css" type="text/css" rel="stylesheet" />
+    
+    </head>
+    
+    <body>
+    
+        <a href="/index.html">Back to homepage</a>
+    
+        <h1>3D Graphics Basics</h1>
+        
+        <h2>External References</h2>
+        
+        <p>I have linked some references I used extensively to understand this topic and I highly recommend that you have a read of these as well.</p>
+        
+        <ul>
+            <li><a href="http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/">open-gl tutorial</a></li>
+            <li><a href="https://www.scratchapixel.com/">Scratch-A-Pixel</a></li>
+        </ul>
+        
+        <h2>The Basics</h2>
+        
+        <p>Let's start with the very basics. The problem we are dealing with is taking a 3d-dimensional system and then creating a 2-dimensional image of what we would see through a camera at a given location and looking in a particular direction in that 3D world. It's just how we see with our eyes because what we see is really a 2D image projected onto our flat retinas.</p>
+        
+        <p></p>
+        
+        <p>If we are describing the location of points and various directions in our 3D world, we will need the help of vectors to quantify them. For our purposes, you can imagine a vector as an arrow, with components (numbers) describing their displacement in their respective dimensions, usually in the order (x, y, z), from the origin of the coordinate system. If we are using a 2D coordinate system, then we just use (x, y).</p>
+        
+        <h2>Homogeneous Coordinates</h2>
+        
+        <p>Using standard 3D transformation matrices, a vector can be scaled and rotated by any amount. However, we also need to be able to translate the 3D vector, but there is no 3D transformation matrix for a translation. The solution here is to use homogenous coordinates, which means using 4 dimensions instead of 3D. I have found it best not to concern myself on what this mathematically means, but to instead just add an extra component onto our 3D vectors, called w, such that our 3D vector will now be represented as (x, y, z, w).</p>
+    
+        <p>What is the value of w? If the vector is a point, then w=1. If the vector represents a direction in space, then w=0. That's it! However, you will see that this makes translation of 3D coordinates easily represented as a 4x4 matrix that can be multiplied with our 4D vector. For the short answer of why position and direction vectors are treated differently by this translation matrix, a position vector can be translated but does it make sense for a direction to be translated in space?</p>
+        
+        <h2>A review of our matrices</h2>
+        
+        <p>Now we can completely transform our 4D (effectively 3D) vectors in space. We call them affine transformation matrices because they are completely self-contained in the matrix and no extra steps are needed; we just need to pre-multiply the vector by the matrix.</p>
+        
+        <img src="images/vector-transformation.png">
+        
+        <h3>Scaling Matrix</h3>
+        
+        <img src="images/scale-matrix.png">
+        
+        <p>where Sx, Sy, and Sz are the scale factors in the x, y, and z directions respectively from the current origin.</p>
+        
+        <h3>Rotation Matrices</h3>
+        
+        <h4>Around the x-axis</h4>
+        
+        <img src="images/xrotation-matrix.png">
+        
+        <h4>Around the y-axis</h4>
+        
+        <img src="images/yrotation-matrix.png">
+         
+        <h4>Around the z-axis</h4>
+        
+        <img src="images/zrotation-matrix.png">
+        
+        <h3>Translation Matrices</h3>
+        
+        <img src="images/translation-matrix.png">
+        
+        <p>where Tx, Ty, and Tz are the changes in the x, y, and z axes respectively.</p>
+        
+        <h2>Transforming the points</h2>
+        
+         <h2>Defining our model</h2>
+        
+        <p>Let's dive right in and define a 3D model. We start with a 3D coordinate system and, for simplicity's sake, the origin of the coordinate system is where we want the center of the model to be. We can then define the position of all points of the model as vectors with respect to the origin, remembering that these points are positions so each point has its w-component set to 1. Great.</p>
+        
+        <h2>Model Space to World Space</h2>
+        
+        <p>Now we need to consider a global coordinate system for our scene, known as world space. In our application, not all models will be located at the world space origin, so we need to transform the points of our model to be defined with respect to the world space origin and not the origin we used for defining our model. Our model may then need to be scaled, rotated, and then translated to its place in the world.</p>
+        
+        <p>We can collapse all of these separate transformations into one matrix. It would be very messy to write down the general matrixc of this, but know that it can be constructed from taking the scaling matrix, pre-multiplying it by the x-rotation, then y-rotation, and then z-rotation matrices, and then finally by the translation matrix.</p>
+        
+        <img src="images/total-transformation.png">
+        
+        <p>Then, we take each point of our model, and pre-multiply it with this new matrix. Now our model's points are defined with respect to the global coordinate system. We would need to create a different transformation matrix for each model, as they will probably be transformed differently.</p>
+        
+        <h2>World Space to View (Camera) Space</h2>
+        
+        <p>This step might be confusing at first. In world space, we have a camera at a certain location and looking in a certain direction. What the camera can see from its position is what we want to see on our screen. Consider a coordinate system for the camera, with the camera being at the origin and it's permanently looking down the -z axis (the reason for the negative axis is just convention). This coordinate system is called either view space or camera space.</p>
+        
+        <p>This is where it may be tricky to understand. We want to take all of our points now defined in world space, and transform them to where they would lie in camera space. This will enable us to then "see what the camera will see". If we didn't perform this step, we would get a 2D image of a 3D world, but it would be fixed at the origin permanently staring down the world space -z axis. This is the step that enables us to move the camera freely.</p>
+        
+        <p>After this, the maths is not too tricky. We just construct a total transformation matrix, just like we did for the models, except this time we are using the camera's location and direction, rather than a model's. This new matrix would then take a point from camera (model) space to world space as before. To get a matrix that does the opposite of this, we can simply take the inverse of this transformation matrix. Now, multiply all world-space model points by this matrix, and that is the last of the 3D transformations we need to do!</p>
+        
+        <h2>Camera Space to Screen Space</h2>
+        
+        <p>This is the final step we need to complete. What the camera can see in view space along the -z axis is what can be seen by the camera. We need to calculate where each point lands on the screen. We will pre-multiply the view space points by the projection matrix.</p>
+        
+        <h3>Projection Matrix</h3>
+        
+        <p>This projection matrix is not an affine transformation. It requires that we make a simple pair of calculations on the points that have just been transformed by this matrix. Aside from this, there are two kinds of projection matrices we can construct: the perspective matrix and the orthographic matrix. The difference is that a pair of parallel lines in view space (e.g. the parallel edges of a cube) eventually converge at a vanishing point in the distance, just like how we see the world in reality. With the orthographic projection, in screen space, these lines will remain parallel. I am going to show the perspective projection here.</p>
+        
+        <img src="images/perspective-matrix.png">
+        
+        <p>This is the most basic form of perspective matrix you can build. It can also include the field-of-view parameter (set to 90deg by this matrix) as well as clipping planes.</p>
+        
+        <p>It is worth briefly considering the coordinate system we are going to use for our screen. Instead of pixels for the moment, we will use Normalised Device Coordinates. These mean the the center of the screen is the origin of the 2D screen, with the left hand side being at x=-1 and the right hand side having x=1. The bottom of the screen is y=-1 and the top is y=1.</p>
+        
+        After we have pre-multiplied our view space points by our perspective projection matrix, we should divide each points' x and y coordinates by the z coordinate of the point separately. The results give us our NDCs (i.e. x for NDC x and y to NDC y). To plot to pixels in your program, use the following equation for x. The equation for y is similar but may have to be flipped due to the NDC orgin being in the screen bottom left but computer monitors using their upper left as the origin.
+        
+        <img src="images/ndc-to-pixel.png">
+        
+        <p>where width is the width of the screen in pixels. For the y-coordinate, height in pixels would be used instead. Now your program should be able to draw lines inbetween the points on the screen to make a wireframe of the model.</p>
+        
+        <h2>What next?</h2>
+        
+        <p>This page covers very basics of 3D graphics and it has barely touched the surface. If you are interested, these topics may be the next steps:</p>
+        
+        <ul>
+            <li>Frustum Culling</li>
+            <li>Drawing solid faces of models</li>
+            <li>Near and far clipping planes</li>
+            <li>Loading model .obj files</li>
+        </ul>
+            
+    </body>
+    
+</html>

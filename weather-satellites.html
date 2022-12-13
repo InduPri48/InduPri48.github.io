@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+    
+    <head>
+    
+        <title>3D Graphics Basics</title>
+        <link href="/style.css" type="text/css" rel="stylesheet" />
+        <link rel="icon" type="image/x-icon" href="images/abscissa-icon.ico">
+
+    </head>
+    
+    <body>
+        
+        <div style="width:75%; margin:auto;">
+        
+            <a href="/index.html">Back to homepage</a>
+        
+            <h1>Receiving Photos from Analogue Weather Satellites</h1>
+            
+            <p>The National Oceanic and Atmospheric Administration (NOAA) has three weather satellites currently in service, constantly taking images of the Earth's surface and sending them down to ground. The images are carried by an analogue system, so that it is relatively easy to intercept and then decode them by yourself. The best of all, this is perfectly acceptable to do to the point where the NOAA has publicly published information on how to do this.</p>
+            
+            <h2>What do I need to do this?</h2>
+            
+            <p>If you were to try this project in the past and you did not have any radio receive besides a household set, it could turn out to be quite expensive. However, this has all changed because of something called Software Defined Radio (or SDR). Rather than buying an expensive radio (possibly in the hundreds of pounds) set that can tune into the signal from the satellite, we instead can purchase a small, cheap (about 25 pounds) USB dongle that can plug into your computer and tune into, not only the frequencies we need, but also a huge range of other radio frequencies. Also, any software that is needed can be downloaded for free, and some of it is open-source too! The remaining cost is the antenna and the wire connecting it, but it is entirely possible to construct the antenna yourself.</p>
+            
+            <h2>Where and When can I do this?</h2>
+            
+            <p>One of the best parts of this project is that these images can be received multiple times a day at any location in the world. How? This is because the three satellites we are going to listen to are all on a polar orbit around the Earth. This means that their orbits pass over the North and South poles whilst the Earth rotates beneath them. This enabled anyone to, over time, be in range of the satellite's radio. A good website that can tell you when any (not just NOAA satellites) satellite is going to pass over your location is <a href="https://www.n2yo.com/">N2YO</a>.</p>
+            
+            <h2>Decoding Software</h2>
+            
+            <p>There are several pieces of free software available on the internet that can take our sound recording and turn it into an image. I will list them here:</p>
+
+            <ul>
+                <li><a href="https://wxtoimgrestored.xyz/">WXToImg</a> - A sophisticated decoder that can decode the image continuously as it arrives and has a rich suite of features. No longer updated by its creator.</li>
+                <li><a href="https://noaa-apt.mbernardi.com.ar/">NOAA APT Image Decoder</a> - Easy to use as a beginner and open source.</li>
+                <li>Write one yourself using Python! (WIP)</li>
+            </ul>
+
+        </div>
+        
+    </body>
+    
+</html>

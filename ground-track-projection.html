@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+    
+    <head>
+    
+        <title>Ground Track Projection | Project Bright</title>
+        <link href="/style.css" type="text/css" rel="stylesheet" />
+        <link rel="icon" type="image/x-icon" href="images/abscissa-icon.ico">
+
+    </head>
+    
+    <body>
+    
+        <a href="/">Back to homepage</a>
+
+        <h1>Projecting Map Boundaries on to a Satellite Image</h1>
+        
+        <p><i>If you haven't already, I would strongly recommend reading <a href="spherical-geometry.html">this</a> to cover the basic concepts about spherical geometry like great circles and <a href="satellite-tracking.html">this</a> to see how to calculate the azimuth function.</i></p>
+        
+        <img src="images/satellite-map-boundaries.jpg" width = 50%>
+        <figcaption>The resulting transformation created by a Python script that imports the original data using shapefiles (.shp, .shx, and .dbf). The stray lines are a little glitch from my code rather than the transformation itself.</figcaption>
+
+        <h2>Introduction</h2>
+        
+        <p>Whilst decoding some images I had received from NOAA weather satellites, I had the choice of whether I wanted to add a map boundary overlay onto my image on the software I had been using. It could find when I started recording the satellite and the duration of the recording and sucessfully added the overlay.</p>
+        
+        <p>I wanted to know how it did this, as it does not seem to be a common map projection to make. Fortunately, the <a href="https://noaa-apt.mbernardi.com.ar/how-it-works.html">software creator's website</a> gave me a starting place.</p>
+        
+        <p>I will assume that the Earth is a perfect sphere throughout. Although I may quote angles in degrees, the formulas shown will use radians as their unit for angles.</p>
+        
+        <h2>The Transformation</h2>
+        
+        <p>Before we think about the solutions for this problem, we need to clarify what it is we are trying to achieve. We have a satellite on an orbit around the Earth. To start with, it will be orbiting from pole to pole so that its orbit is perpendicular to the equator. Over a period of time, it starts at one location and moves (let's say towards the North pole) and scans the ground beneath it to form a picture so that if we plotted the image boundaries on the Earth, we have a rectangle pasted on the Earth's surface. Therefore, we want to have a function that takes a point on the Earth's surface (given it's global coordinates) and transforms it to a pixel position on our picture rectangle.</p>
+        
+        <img src="images/ground-track.jpg" width=50%>
+        
+        <h2>The Steps of the Transformation</h2>
+        
+        <p>First, we must find the vertex angle B and the hypotenuse distance c. Knowing the coordinates of the satellite's starting location and the global point, we can use the azimuth and great circle distance formulas. To then find x and y, we need to use Napier's Rules from right spherical trigonometry. These topics are covered at the link near the top of this page.</p>
+        
+        <p>We need to change x and y to become image coordinates, with the origin at the bottom left of the image. The units of the transform along the x and y axes are a little ambiguous, so we need to normalise them. The width and height of the image form great circles on the surface of the Earth, so these distances are represented by great circle arc angles. Divide x and y by the anglular image width and height respectively. We have to also add 0.5 to x so it's range goes between -0.5 and 0.5 to between 0 and 1, just like y.</p>
+        
+        <h2>Scaling the Image Pixel Coordinates</h2>
+        
+        <p>The difficult step of the transformation is over. The coordinates x and y now must be converted from normalised (between 0 and 1) coordinates to pixel coordinates. How do we know how wide the image should be?</p>
+        
+        <p>The resolution of the images from NOAA satellites are roughly 4km/pixel. If we have specified our image width and height in (angular) great circle distances, we can work out the distances (as lengths) the image covers. We then divide the width and height as lengths by 4km/pixel to get the width and height as pixels. Multiply each transformed point's x and y by the pixel width and height respectively and the transform is complete!</p>
+        
+        <h2>What's next?</h2>
+        
+        <p>Map boundaries are stored as a list of points in global coordinates. You could create a program to transform these points like I did in the picture at the top. However, if you overlay your transformed boundaries on to a real satellite photo, it wouldn't fit regardless of how much stretching and rotating you apply. This is because these need to be applied during the transformation, not after. The NOAA weather satellites orbit with an inclination of about 19 degrees away from a line of longitude. To account for this, offset B by this before you use it in the spherical trigonometry.</p>
+        
+        <p>Also, the Earth will rotate underneath the satellite as it's taking an image, which will mean the image is distorted. This can be accounted for and see <a href="https://noaa-apt.mbernardi.com.ar/how-it-works.html">this</a> for advice on how to account for this too.</p>
+        
+    </body>
+    
+</html>

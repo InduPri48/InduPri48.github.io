@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+    
+    <head>
+    
+        <title>Satellite Tracking | Project Bright</title>
+        <link href="/style.css" type="text/css" rel="stylesheet" />
+        <link rel="icon" type="image/x-icon" href="images/abscissa-icon.ico">
+
+    </head>
+    
+    <body>
+        
+        <a href="/">Back to homepage</a>
+        
+        <h1>Satellite Tracking</h1>
+        
+        <p><i>If you haven't already, I would strongly recommend reading <a href="spherical-geometry.html">this</a> to cover the basic concepts about spherical geometry.</i></p>
+        
+        <p>Let's say we need a directional antenna (e.g. dish, yagi) to be pointed at a given satellite from our location on the Earth's surface. How do we know where to point?</p>
+        
+        <p>The coordinate system we will use to point our antenna will be azimuth-elevation. From our ground location, the azimuth is the angle measured from true North to any particular direction parallel to the plane of the ground i.e. similar to compass bearings. Elevation is the angle from our local horizon up to the satellite. These are the coordinates we want to calculate in the end.</p>
+        
+        <p>A satellite orbiting around Earth is always directly above a single point on the Earth's surface. This point can be easily located using the latitude-longitude coordinate system. We also need to know the latitude-longitude coordinates we are observing from.</p>
+        
+        <p>N.B. We will assume the Earth is a perfect sphere for these calculations.</p>
+        
+        <h2>Calculating Azimuth</h2>
+        
+        <p>This is the formula to calculate Point 2's azimuth measured from Point 1. The phis represents latitude and lambdas represents longitude, which must be first converted to radians.</p>
+        
+        <img src="images/azimuth-equation.jpg" width=50%>
+        
+        <img src="images/azimuth-diagram.jpg" width=50%>
+        
+        <h2>Calculating Elevation</h2>
+        
+        <p>This formula is a little more complicated. It needs the height, h, of the satellite above the Earth's surface and the radius of the Earth, R in addition to the latitude-longitude coordinates of the observer and satellite. I have derived this formula myself so please contact me if you spot any mistakes.</p>
+        
+        <img src="images/elevation-equation.jpg" width=50%>
+        
+        <img src="images/elevation-diagram.jpg" width=50%>
+        
+        <h2>Conclusion</h2>
+        
+        <p>We have calculated where we should point our satellite in the sky. However, remember that these equations assumed the Earth is a perfect sphere whereas the real earth is an oblate spheroid, so our results will be off by a small amount. I haven't worked out equations that account for this but hopefully the two given here are a good starting place if you're curious.</p>
+        
+    </body>
+    
+</html>
